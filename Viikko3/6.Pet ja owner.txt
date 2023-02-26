@@ -1,0 +1,117 @@
+Muuta aikaisemmin tehdyn pet-taulun rakenne oppimateriaalissa esitetyn kaltaiseksi, eli meillä on kaksi taulua, pet ja owner ja niiden välillä yhdestä moneen-yhteys.
+Esitä vastauksessasi tarvittavat SQL-lauseet sekä taulujen rakenne DESC-lauseella.
+
+1) 
+-Luodaan owner taulukko ja määritetään ownerID pääavaimeksi.
+-Auto incrementillä arvo kasvaa automaattisesti kun uusi tietue lisätään
+
+mysql> create table owner
+-> (
+-> first_name varchar(255),
+-> last_name varchar(255),
+-> address varchar(255),
+-> ownerID int primary key auto_increment
+-> );
+
+mysql> desc owner;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| first_name | varchar(255) | YES  |     | NULL    |                |
+| last_name  | varchar(255) | YES  |     | NULL    |                |
+| address    | varchar(255) | YES  |     | NULL    |                |
+| ownerID    | int          | NO   | PRI | NULL    | auto_increment |
++------------+--------------+------+-----+---------+----------------+
+
+2) 
+-Poistetaan owner tietue ja lisätään petID ja ownerID.
+-petID:stä tehdään pääavain ja ownerID:stä multiple.
+-Auto incrementillä arvo kasvaa automaattisesti kun uusi tietue lisätään
+
+mysql> ALTER TABLE pet DROP COLUMN owner;
+mysql> ALTER TABLE pet ADD COLUMN petID INT PRIMARY KEY AUTO_INCREMENT;
+mysql> ALTER TABLE pet ADD COLUMN ownerID INT;
+mysql> ALTER TABLE pet ADD CONSTRAINT FOREIGN KEY(ownerID) REFERENCES owner(ownerID);
+mysql> desc pet;
++---------+-------------+------+-----+---------+----------------+
+| Field   | Type        | Null | Key | Default | Extra          |
++---------+-------------+------+-----+---------+----------------+
+| name    | varchar(20) | YES  |     | NULL    |                |
+| species | varchar(20) | YES  |     | NULL    |                |
+| sex     | char(1)     | YES  |     | NULL    |                |
+| birth   | date        | YES  |     | NULL    |                |
+| death   | date        | YES  |     | NULL    |                |
+| petID   | int         | NO   | PRI | NULL    | auto_increment |
+| ownerID | int         | YES  | MUL | NULL    |                |
++---------+-------------+------+-----+---------+----------------+
+
+
+3)
+-Syötetään owner tauluun tietoja esimerkin mukaisesti.
+
+mysql> INSERT INTO owner VALUES ( 'Harold','Lloyd','Someaddress 1',NULL);
+mysql> INSERT INTO owner VALUES ( 'Gwen','Stefani','Someaddress 2',NULL);
+mysql> INSERT INTO owner VALUES ( 'Benny','Hill','Someaddress 3',NULL);
+mysql> INSERT INTO owner VALUES ( 'Diane','Keaton','Someaddress 4',NULL);
+mysql> select*from owner;
++------------+-----------+---------------+---------+
+| first_name | last_name | address       | ownerID |
++------------+-----------+---------------+---------+
+| Harold     | Lloyd     | Someaddress 1 |       1 |
+| Gwen       | Stefani   | Someaddress 2 |       2 |
+| Benny      | Hill      | Someaddress 3 |       3 |
+| Diane      | Keaton    | Someaddress 4 |       4 |
++------------+-----------+---------------+---------+
+
+-Taulukkoon lisättiin Slim-käärme jolla ei omistajaa:
+mysql> INSERT INTO pet VALUES ('Slim','snake','m','1996-04-29',NULL,NULL,NULL);
+
+4) 
+-Kuten kuvassa näkyy. Kummankaan taulun ownerID:tä ei olla päivitetty. 
+Eli lemmikeillä ei näy omistajaa.
++----------+---------+------+------------+------------+-------+---------+
+| name     | species | sex  | birth      | death      | petID | ownerID |
++----------+---------+------+------------+------------+-------+---------+
+| Fluffy   | cat     | f    | 1993-02-04 | NULL       |     1 |    NULL |
+| Claws    | cat     | m    | 1994-03-17 | NULL       |     2 |    NULL |
+| Buffy    | dog     | f    | 1989-05-13 | NULL       |     3 |    NULL |
+| Fang     | dog     | m    | 1990-08-27 | NULL       |     4 |    NULL |
+| Bowser   | dog     | m    | 1998-08-31 | 1995-07-29 |     5 |    NULL |
+| Chirpy   | bird    | f    | 1998-09-11 | 2000-09-15 |     6 |    NULL |
+| Whistler | bird    | NULL | 1997-12-09 | NULL       |     7 |    NULL |
+| Slim     | snake   | m    | 1996-04-29 | NULL       |     8 |    NULL |
+| Slim     | snake   | m    | 1996-04-29 | NULL       |     9 |    NULL |
++----------+---------+------+------------+------------+-------+---------+
+
+mysql> UPDATE pet SET ownerID=1 WHERE name='Fluffy';
+mysql> UPDATE pet SET ownerID=3 WHERE name='Claws';
+mysql> UPDATE pet SET ownerID=1 WHERE name='Buffy';
+mysql> UPDATE pet SET ownerID=4 WHERE name='Fang';
+mysql> UPDATE pet SET ownerID=4 WHERE name='Bowser'; 
+HOX!(ownerID5 ei ole olemassa owner taulukossa esimerkin mukaisesti. Laitoin bowserin 4 ID:hen)
+mysql> UPDATE pet SET ownerID=3 WHERE name='Chirpy' OR name='Whistler';
+mysql> UPDATE pet SET ownerID=4 WHERE name='Slim';
+
+5)
+-Tehtävänannon mukainen taulukko:
+-Yhdestä moneen yhteys näkyy ylemmissä taulukoissa. 
+mysql> select * from pet;
++----------+---------+------+------------+------------+-------+---------+
+| name     | species | sex  | birth      | death      | petID | ownerID |
++----------+---------+------+------------+------------+-------+---------+
+| Fluffy   | cat     | f    | 1993-02-04 | NULL       |     1 |       1 |
+| Claws    | cat     | m    | 1994-03-17 | NULL       |     2 |       3 |
+| Buffy    | dog     | f    | 1989-05-13 | NULL       |     3 |       1 |
+| Fang     | dog     | m    | 1990-08-27 | NULL       |     4 |       4 |
+| Bowser   | dog     | m    | 1998-08-31 | 1995-07-29 |     5 |       4 |
+| Chirpy   | bird    | f    | 1998-09-11 | 2000-09-15 |     6 |       3 |
+| Whistler | bird    | NULL | 1997-12-09 | NULL       |     7 |       3 |
+| Slim     | snake   | m    | 1996-04-29 | NULL       |     8 |       4 |
++----------+---------+------+------------+------------+-------+---------+
+mysql> show tables;
++-------------------+
+| Tables_in_opinnot |
++-------------------+
+| owner             |
+| pet               |
++-------------------+

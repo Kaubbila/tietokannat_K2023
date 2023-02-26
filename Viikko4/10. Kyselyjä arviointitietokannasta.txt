@@ -1,0 +1,70 @@
+1) Tulosta kaikki opiskelijat, joilla on tietokannassa hylätty arvosana
+
+select etunimi, sukunimi, arvosana, nimi from arviointi
+join opiskelija on opiskelija.idopiskelija = arviointi.idopiskelija
+join opintojakso on opintojakso.idopintojakso = arviointi.idopintojakso
+where arvosana = '0';
++---------+----------+----------+---------------+
+| etunimi | sukunimi | arvosana | nimi          |
++---------+----------+----------+---------------+
+| Aku     | Ankka    |        0 | Ruotsin kieli |
++---------+----------+----------+---------------+
+
+2) Tulosta kaikki Fysiikka 3-kurssin hyväksytysti suorittaneet
+
+select etunimi, sukunimi , nimi from arviointi
+join opiskelija on opiskelija.idopiskelija = arviointi.idopiskelija
+join opintojakso on opintojakso.idopintojakso = arviointi.idopintojakso
+where nimi = 'Fysiikka 3' and arvosana > '0';
++---------+----------+------------+
+| etunimi | sukunimi | nimi       |
++---------+----------+------------+
+| Aku     | Ankka    | Fysiikka 3 |
+| Roope   | Ankka    | Fysiikka 3 |
+| Iines   | Ankka    | Fysiikka 3 |
+| Mikki   | Hiiri    | Fysiikka 3 |
+| Hessu   | Hopo     | Fysiikka 3 |
++---------+----------+------------+
+
+3) Mille kursseille Hessu on osallistunut ?
+
+select nimi from arviointi
+join opiskelija on opiskelija.idopiskelija = arviointi.idopiskelija
+join opintojakso on opintojakso.idopintojakso = arviointi.idopintojakso
+where etunimi = 'Hessu' and sukunimi = 'Hopo';
++-------------+
+| nimi        |
++-------------+
+| Fysiikka 3  |
+| Tietokannat |
++-------------+
+
+4) Mikä on Akun opintosuoritusten keskiarvo ?
+
+select etunimi, sukunimi, AVG(arvosana) from arviointi
+join opiskelija on opiskelija.idopiskelija = arviointi.idopiskelija
+join opintojakso on opintojakso.idopintojakso = arviointi.idopintojakso
+where etunimi = 'Aku'
+group by etunimi, sukunimi;
++---------+----------+---------------+
+| etunimi | sukunimi | AVG(arvosana) |
++---------+----------+---------------+
+| Aku     | Ankka    |        0.6667 |
++---------+----------+---------------+
+
+
+5) Millä opintojaksoilla ei ole yhtään suoritusmerkintää ?
+
+select nimi, arvosana from arviointi
+right join opintojakso on arviointi.idopintojakso = opintojakso.idopintojakso
+where arvosana is null;
++--------------------------+----------+
+| nimi                     | arvosana |
++--------------------------+----------+
+| Liike-elaman tapatietous |     NULL |
+| Elektroniikan perusteet  |     NULL |
+| Kellarihumppa            |     NULL |
+| Matematiikka 2           |     NULL |
+| VHDL-kieli               |     NULL |
++--------------------------+----------+
+

@@ -1,0 +1,145 @@
+a) Tulosta kymmenen aakkosjärjestyksessä ensimmäisen työntekijän tiedot sukunimen mukaan lajiteltuna. 
+Vihje: LIMIT rajoittaa tulostettavien tietojen määrän.
+
+mysql> SELECT * FROM employees ORDER BY last_name LIMIT 10;
++--------+------------+------------+-----------+--------+------------+
+| emp_no | birth_date | first_name | last_name | gender | hire_date  |
++--------+------------+------------+-----------+--------+------------+
+|  11761 | 1964-07-17 | Bartek     | Aamodt    | M      | 1991-06-12 |
+|  15427 | 1959-03-06 | Aluzio     | Aamodt    | M      | 1985-03-03 |
+|  18182 | 1963-02-23 | Dekang     | Aamodt    | F      | 1988-05-25 |
+|  16572 | 1956-11-26 | Matt       | Aamodt    | M      | 1987-06-16 |
+|  12791 | 1960-06-16 | Mokhtar    | Aamodt    | M      | 1994-08-14 |
+|  12516 | 1958-06-25 | Sreenivas  | Aamodt    | F      | 1990-03-06 |
+|  12982 | 1952-12-08 | Sachem     | Aamodt    | F      | 1992-01-11 |
+|  17400 | 1962-03-22 | Basim      | Aamodt    | F      | 1991-09-15 |
+|  19898 | 1957-03-09 | Vidar      | Aamodt    | M      | 1988-08-06 |
+|  17885 | 1954-02-01 | Takanari   | Aamodt    | M      | 1996-08-19 |
++--------+------------+------------+-----------+--------+------------+
+
+b) Sama kuten edellä, mutta sukunimen JA etunimen mukaan lajiteltuna.
+
+mysql> select * from employees order by first_name, last_name limit 10;
++--------+------------+------------+-----------+--------+------------+
+| emp_no | birth_date | first_name | last_name | gender | hire_date  |
++--------+------------+------------+-----------+--------+------------+
+|  69256 | 1962-04-14 | Aamer      | Anger     | M      | 1998-03-16 |
+| 486584 | 1952-08-12 | Aamer      | Armand    | M      | 1990-09-15 |
+| 237165 | 1962-02-23 | Aamer      | Azevdeo   | F      | 1991-06-28 |
+| 413688 | 1955-06-26 | Aamer      | Azuma     | M      | 1989-12-10 |
+| 281363 | 1956-05-18 | Aamer      | Baak      | F      | 1994-03-10 |
+| 242368 | 1959-07-26 | Aamer      | Baaleh    | F      | 1989-08-06 |
+| 206549 | 1960-02-24 | Aamer      | Baar      | M      | 1995-06-12 |
+| 259089 | 1963-06-08 | Aamer      | Baba      | M      | 1995-02-02 |
+| 283280 | 1962-10-21 | Aamer      | Bahl      | F      | 1985-11-22 |
+|  60922 | 1961-01-01 | Aamer      | Bahl      | F      | 1992-06-21 |
++--------+------------+------------+-----------+--------+------------+
+
+c) Tulosta viiden viimeksi palkatun työntekijän tiedot.
+mysql> select * from employees order by  hire_date desc limit 5;
++--------+------------+------------+-----------+--------+------------+
+| emp_no | birth_date | first_name | last_name | gender | hire_date  |
++--------+------------+------------+-----------+--------+------------+
+| 463807 | 1964-06-12 | Bikash     | Covnot    | M      | 2000-01-28 |
+| 428377 | 1957-05-09 | Yucai      | Gerlach   | M      | 2000-01-23 |
+| 499553 | 1954-05-06 | Hideyuki   | Delgrande | F      | 2000-01-22 |
+| 222965 | 1959-08-07 | Volkmar    | Perko     | F      | 2000-01-13 |
+|  47291 | 1960-09-09 | Ulf        | Flexer    | M      | 2000-01-12 |
++--------+------------+------------+-----------+--------+------------+
+
+d) Kenellä on suurin palkka ?
+mysql> select * from employees join salaries ON employees.emp_no = salaries.emp_no
+    -> order by salaries.salary desc limit 1;
++--------+------------+------------+-----------+--------+------------+--------+--------+------------+------------+
+| emp_no | birth_date | first_name | last_name | gender | hire_date  | emp_no | salary | from_date  | to_date    |
++--------+------------+------------+-----------+--------+------------+--------+--------+------------+------------+
+|  43624 | 1953-11-14 | Tokuyasu   | Pesch     | M      | 1985-03-26 |  43624 | 158220 | 2002-03-22 | 9999-01-01 |
++--------+------------+------------+-----------+--------+------------+--------+--------+------------+------------+
+
+e) Kenellä on pienin palkka ?
+mysql>  select * from employees join salaries ON employees.emp_no = salaries.emp_no
+    -> order by salaries.salary limit 1;
++--------+------------+------------+-----------+--------+------------+--------+--------+------------+------------+
+| emp_no | birth_date | first_name | last_name | gender | hire_date  | emp_no | salary | from_date  | to_date    |
++--------+------------+------------+-----------+--------+------------+--------+--------+------------+------------+
+| 253406 | 1953-09-23 | Olivera    | Baek      | M      | 1994-07-04 | 253406 |  38623 | 2002-02-20 | 9999-01-01 |
++--------+------------+------------+-----------+--------+------------+--------+--------+------------+
+
+f)Tulosta työntekijät, jotka ansaitsevat yli 150000
+mysql>  select * from employees join salaries ON employees.emp_no = salaries.emp_no
+    -> where salaries.salary >= 150000;
++--------+------------+------------+-----------+--------+------------+--------+--------+------------+------------+
+| emp_no | birth_date | first_name | last_name | gender | hire_date  | emp_no | salary | from_date  | to_date    |
++--------+------------+------------+-----------+--------+------------+--------+--------+------------+------------+
+|  43624 | 1953-11-14 | Tokuyasu   | Pesch     | M      | 1985-03-26 |  43624 | 151115 | 1998-03-23 | 1999-03-23 |
+|  43624 | 1953-11-14 | Tokuyasu   | Pesch     | M      | 1985-03-26 |  43624 | 153166 | 1999-03-23 | 2000-03-22 |
+|  43624 | 1953-11-14 | Tokuyasu   | Pesch     | M      | 1985-03-26 |  43624 | 153458 | 2000-03-22 | 2001-03-22 |
+|  43624 | 1953-11-14 | Tokuyasu   | Pesch     | M      | 1985-03-26 |  43624 | 157821 | 2001-03-22 | 2002-03-22 |
+|  43624 | 1953-11-14 | Tokuyasu   | Pesch     | M      | 1985-03-26 |  43624 | 158220 | 2002-03-22 | 9999-01-01 |
+|  46439 | 1953-01-31 | Ibibia     | Junet     | M      | 1985-05-20 |  46439 | 150345 | 2002-05-15 | 9999-01-01 |
+|  47978 | 1956-03-24 | Xiahua     | Whitcomb  | M      | 1985-07-18 |  47978 | 151929 | 2001-07-14 | 2002-07-14 |
+|  47978 | 1956-03-24 | Xiahua     | Whitcomb  | M      | 1985-07-18 |  47978 | 155709 | 2002-07-14 | 9999-01-01 |
+.... jne
+
+g) Kuinka monta työntekijää työskentelee myynnissä (Sales) ? Entä markkinoinnissa (Marketing) ?
+
+mysql> select dept_name,count(*) as people from departments
+    -> join dept_emp on departments.dept_no = dept_emp.dept_no
+    -> join employees on employees.emp_no=dept_emp.emp_no
+    -> where dept_name = 'sales' or dept_name = 'marketing'
+    -> group by dept_name;
++-----------+--------+
+| dept_name | people |
++-----------+--------+
+| Marketing |  20211 |
+| Sales     |  52245 |
++-----------+--------+
+
+h) Tulosta kaikkien osastonjohtajien (Department Managers) etunimi, sukunimi ja osasto, 
+jolla työskentelee.
+
+mysql> select first_name, last_name, dept_name from employees
+    -> join dept_manager on employees.emp_no = dept_manager.emp_no
+    -> join departments on dept_manager.dept_no=departments.dept_no;
++-------------+--------------+--------------------+
+| first_name  | last_name    | dept_name          |
++-------------+--------------+--------------------+
+| Tonny       | Butterworth  | Customer Service   |
+| Marjo       | Giarratana   | Customer Service   |
+| Xiaobin     | Spinelli     | Customer Service   |
+| Yuchang     | Weedman      | Customer Service   |
+| DeForest    | Hagimont     | Development        |
+| Leon        | DasSarma     | Development        |
+| Ebru        | Alpin        | Finance            |
+| Isamu       | Legleitner   | Finance            |
+| Shirish     | Ossenbruggen | Human Resources    |
+| Karsten     | Sigstam      | Human Resources    |
+| Margareta   | Markovitch   | Marketing          |
+| Vishwani    | Minakawa     | Marketing          |
+| Krassimir   | Wegerle      | Production         |
+| Rosine      | Cools        | Production         |
+| Shem        | Kieras       | Production         |
+| Oscar       | Ghazalie     | Production         |
+| Peternela   | Onuegbe      | Quality Management |
+| Rutger      | Hofmeyr      | Quality Management |
+| Sanjoy      | Quadeer      | Quality Management |
+| Dung        | Pesch        | Quality Management |
+| Arie        | Staelin      | Research           |
+| Hilary      | Kambil       | Research           |
+| Przemyslawa | Kaelbling    | Sales              |
+| Hauke       | Zhang        | Sales              |
++-------------+--------------+--------------------+
+
+i) Mikä on myynnissä työskentelevien keskipalkka ? Entä markkinoinnissa ?
+
+mysql> select dept_name, avg(salary) from salaries
+    -> join dept_emp on salaries.emp_no = dept_emp.emp_no
+    -> join departments on dept_emp.dept_no = departments.dept_no
+    -> where dept_name = 'sales' or dept_name ='marketing'
+    -> group by dept_name;
++-----------+-------------+
+| dept_name | avg(salary) |
++-----------+-------------+
+| Marketing |  71913.2000 |
+| Sales     |  80667.6058 |
++-----------+-------------+

@@ -1,0 +1,77 @@
+a) Minkä nimisiä osastoja (Departments) Employees-tietokannassa on ?
+->select * from departments;
++---------+--------------------+
+| dept_no | dept_name          |
++---------+--------------------+
+| d009    | Customer Service   |
+| d005    | Development        |
+| d002    | Finance            |
+| d003    | Human Resources    |
+| d001    | Marketing          |
+| d004    | Production         |
+| d006    | Quality Management |
+| d008    | Research           |
+| d007    | Sales              |
++---------+--------------------+
+
+b) Tulosta, (yhden kerran kukin) mitä nimikkeitä (title) tietokannassa on.
+->mysql> select distinct title from titles;
++--------------------+
+| title              |
++--------------------+
+| Senior Engineer    |
+| Staff              |
+| Engineer           |
+| Senior Staff       |
+| Assistant Engineer |
+| Technique Leader   |
+| Manager            |
++--------------------+
+
+c) Mikä on suurin ja pienin palkka (salary) ? VIHJE: MIN, MAX
+->mysql> select max(salary), min(salary) from salaries;
++-------------+-------------+
+| max(salary) | min(salary) |
++-------------+-------------+
+|      158220 |       38623 |
++-------------+-------------+
+
+d) Mikä on keskimääräinen palkka ? VIHJE: AVG
+->mysql> select AVG(salary) from salaries;
++-------------+
+| AVG(salary) |
++-------------+
+|  63810.7448 |
++-------------+
+
+e) Tulosta kaikki työntekijät, joiden sukunimi on Facello.
+->mysql> select * from employees where (last_name = 'Facello');
++--------+------------+-------------+-----------+--------+------------+
+| emp_no | birth_date | first_name  | last_name | gender | hire_date  |
++--------+------------+-------------+-----------+--------+------------+
+|  10001 | 1953-09-02 | Georgi      | Facello   | M      | 1986-06-26 |
+|  10327 | 1954-04-01 | Roded       | Facello   | M      | 1987-09-18 |
+|  12751 | 1964-07-06 | Nahum       | Facello   | M      | 1995-01-09 |
+|  15346 | 1959-09-26 | Kirk        | Facello   | F      | 1991-12-07 |
+|  15685 | 1958-07-12 | Kasturi     | Facello   | M      | 1992-03-13 |
+|  18686 | 1962-02-23 | Kwangyoen   | Facello   | F      | 1985-05-02 |
+|  19041 | 1957-05-29 | Billur      | Facello   | F      | 1992-08-03 |
+|  21947 | 1954-06-18 | Taisook     | Facello   | F      | 1991-07-30 |
+...jne. Pitkä lista. 
+
+f) Kuinka moni työntekijä on syntynyt 1950-luvulla ?
+->mysql> select count(birth_date) from employees where birth_date >= '1950-1-1' AND birth_date < '1960-1-1';
++-------------------+
+| count(birth_date) |
++-------------------+
+|            182886 |
++-------------------+
+
+g) Montako miestä ja montako naista työntekijöissä on ?
+->mysql> select gender, count(*) from employees group by gender;
++--------+----------+
+| gender | count(*) |
++--------+----------+
+| M      |   179973 |
+| F      |   120051 |
++--------+----------+
