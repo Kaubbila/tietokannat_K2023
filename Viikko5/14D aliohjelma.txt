@@ -1,0 +1,43 @@
+*14 d)
+CREATE PROCEDURE LisaaSuoritus (
+IN En VARCHAR(45),
+IN Sn VARCHAR(45),
+IN KK VARCHAR(45),
+IN Arvos INT
+)
+
+-- Aliohjelman kutsu mysql:n komentoriviltä:
+-- CALL LisaaSuoritus('Iines','Ankka','T200123',3);
+
+Aliohjelma:BEGIN
+DECLARE OpID INT DEFAULT 0;
+DECLARE OpjaksoID INT DEFAULT 0;
+
+-- Etsitään opiskelijan ID
+SELECT idOpiskelija INTO OpID FROM Opiskelija WHERE Etunimi=En AND Sukunimi=Sn;
+
+-- Jos opiskelijaa ei löydy, lopeta suoritus
+IF OpID=0 THEN 
+    SELECT 'Opiskelijaa ei ole'; -- Tulostetaan viesti käyttäjälle
+    LEAVE Aliohjelma;
+END IF;
+
+-- Etsitään opintojakson ID
+SELECT idOpintojakso INTO OpjaksoID FROM Opintojakso WHERE Koodi=KK;
+
+-- Jos opintojaksoa ei löydy, lopeta suoritus
+IF OpjaksoID=0 THEN 
+    SELECT 'Opintojaksoa ei ole'; -- Tulostetaan viesti käyttäjälle
+    LEAVE Aliohjelma;
+END IF;
+
+-- Tarkista, että muuttuja Arvos on välillä 0-5
+IF Arvos < 0 OR Arvos > 5 THEN
+    SELECT 'Arvosana ei ole välillä 0 - 5'; -- Tulosta viesti käyttäjälle
+    LEAVE Aliohjelma;
+END IF;
+
+-- Lopuksi, jos opiskelija ja opintojakso on olemassa ja arvosana on järkevä
+INSERT INTO Arviointi VALUES(NULL,CURDATE(),Arvos,OpiskID,OpjaksoID);
+END;
+
